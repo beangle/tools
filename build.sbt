@@ -1,3 +1,4 @@
+import BuildSettings.commonSettings
 import org.beangle.parent.Dependencies._
 
 ThisBuild / organization := "org.beangle.tools"
@@ -27,6 +28,7 @@ val commonDeps = Seq(logback_classic, logback_core,  scalatest)
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
+    commonSettings,
     name := "sbt-beangle-tools",
     libraryDependencies ++= Seq(logback_classic, logback_core,postgresql,h2,jtds,ojdbc11,orai18n,mysql_connector_java,mssql_jdbc,HikariCP)
   )
