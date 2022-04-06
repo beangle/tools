@@ -40,9 +40,7 @@ object OrmPlugin extends sbt.AutoPlugin {
   lazy val bootClasspathsTask = {
     Def.task {
       val classpaths = new collection.mutable.ArrayBuffer[Attributed[File]]
-      classpaths ++= (Compile / externalDependencyClasspath).value
-      classpaths ++= (Runtime / externalDependencyClasspath).value
-      classpaths ++= (Compile / internalDependencyClasspath).value
+      classpaths ++= (Runtime / fullClasspath).value
       classpaths
     }
   }

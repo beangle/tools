@@ -5,7 +5,7 @@
 
     addSbtPlugin("org.beangle.tools" % "sbt-beangle-tools" % "0.0.1")
 
-该开发包有如下及格插件
+该开发包有如下几个插件
 
 ### 1. OrmPlugin 格式检查
 
