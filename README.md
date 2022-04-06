@@ -3,9 +3,9 @@
 ## 引入 tools plugin
 使用sbt构建时，在project/plugins.sbt中添加
 
-    addSbtPlugin("org.beangle.tools" % "sbt-beangle-tools" % "0.0.1")
+    addSbtPlugin("org.beangle.tools" % "sbt-beangle-tools" % "0.0.2")
 
-该开发包有如下及格插件
+该开发包有如下几个插件
 
 ### 1. OrmPlugin 格式检查
 

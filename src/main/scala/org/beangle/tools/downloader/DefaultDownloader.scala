@@ -95,7 +95,6 @@ class DefaultDownloader(val url: URL, protected val location: File) extends Down
 
   case class ResourceStatus(status: Int, target: URL, length: Long, lastModified: Long, supportRange: Boolean)
 
-
   /** Close many objects quitely.
    * swallow any exception.
    */
