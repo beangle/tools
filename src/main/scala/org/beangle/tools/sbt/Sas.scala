@@ -20,6 +20,6 @@ package org.beangle.tools.sbt
 import sbt._
 
 object Sas {
-  val Tomcat = "org.beangle.sas" % "beangle-sas-tomcat" % "0.9.2"
-
+  val Tomcat = "org.beangle.sas" % "beangle-sas-tomcat" % "0.9.3"
+  val Undertow = "org.beangle.sas" % "beangle-sas-undertow" % "0.9.3"
 }

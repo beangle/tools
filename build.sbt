@@ -2,7 +2,7 @@ import BuildSettings.commonSettings
 import org.beangle.parent.Dependencies._
 
 ThisBuild / organization := "org.beangle.tools"
-ThisBuild / version := "0.0.2"
+ThisBuild / version := "0.0.3"
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -22,8 +22,6 @@ ThisBuild / developers := List(
 
 ThisBuild / description := "The Beangle Sbt Tools"
 ThisBuild / homepage := Some(url("https://beangle.github.io/tools/index.html"))
-
-val commonDeps = Seq(logback_classic, logback_core,  scalatest)
 
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)

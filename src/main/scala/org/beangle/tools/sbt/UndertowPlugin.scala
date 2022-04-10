@@ -20,11 +20,11 @@ package org.beangle.tools.sbt
 import sbt.*
 import sbt.Keys.*
 
-object TomcatPlugin extends sbt.AutoPlugin {
+object UndertowPlugin extends sbt.AutoPlugin {
 
   object autoImport {
     lazy val baseSettings: Seq[Setting[_]] = Seq(
-      libraryDependencies += Sas.Tomcat % "test"
+      libraryDependencies += Sas.Undertow % "test"
     )
   }
 
