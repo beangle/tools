@@ -24,7 +24,7 @@ import java.net.URL
 import scala.collection.mutable
 
 object Dependency {
-  val repoBase = "https://repo1.maven.org/maven2"
+  val repoBase = "https://maven.aliyun.com/nexus/content/groups/public"
 
   def m2Path(m2Root: String, group: String, artifactName: String, version: String, packaging: String = ".jar"): String = {
     var m2Base = if (m2Root.startsWith("file:")) m2Root.substring("file:".length) else m2Root
