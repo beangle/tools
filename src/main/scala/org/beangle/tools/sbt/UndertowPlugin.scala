@@ -24,7 +24,7 @@ object UndertowPlugin extends sbt.AutoPlugin {
 
   object autoImport {
     lazy val baseSettings: Seq[Setting[_]] = Seq(
-      libraryDependencies += Sas.Undertow % "test"
+      libraryDependencies ++= (Sas.Engine, Sas.Undertow)
     )
   }
 

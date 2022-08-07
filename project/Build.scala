@@ -19,5 +19,6 @@ object BuildSettings {
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    })
+    },credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials"))
+
 }

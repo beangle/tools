@@ -73,7 +73,7 @@ object DdlPlugin extends sbt.AutoPlugin {
     }
 
   def report(m2Root: String, xmlFile: File, target: File, log: util.Logger): Unit = {
-    val rs = Dependency.resolveJar(m2Root, "org.beangle.db:beangle-db-report_3:0.0.14")
+    val rs = Dependency.resolveJar(m2Root, "org.beangle.db:beangle-db-report_3:0.0.15")
     if (rs._1) {
       val reportDir = new File(target.getAbsolutePath + "/dbreport/")
       reportDir.mkdirs()
@@ -84,6 +84,7 @@ object DdlPlugin extends sbt.AutoPlugin {
       val pro = pb.start()
       pro.waitFor()
       log.info(s"DDL report was generated in ${targetDir}")
+      Tools.openBrowser(targetDir+"/index.html")
     }
   }
 
