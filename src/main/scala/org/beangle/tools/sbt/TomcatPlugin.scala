@@ -24,7 +24,7 @@ object TomcatPlugin extends sbt.AutoPlugin {
 
   object autoImport {
     lazy val baseSettings: Seq[Setting[_]] = Seq(
-      libraryDependencies += Sas.Tomcat % "test"
+      libraryDependencies ++= Seq(Sas.Engine, Sas.Tomcat)
     )
   }
 
