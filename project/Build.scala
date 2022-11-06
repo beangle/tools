@@ -6,7 +6,7 @@ object BuildSettings {
     organizationName := "The Beangle Software",
     startYear := Some(2005),
     licenses += ("GNU General Public License version 3", new URL("http://www.gnu.org/licenses/lgpl-3.0.txt")),
-    libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.2.5" % Test),
+    libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.2.14" % Test),
     crossPaths := true,
 
     publishMavenStyle := true,
