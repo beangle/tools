@@ -24,6 +24,8 @@ import java.io.File
 
 object DdlPlugin extends sbt.AutoPlugin {
 
+  var BeangleDbReportVersion="0.0.23"
+
   object autoImport {
     val ddlDiff = inputKey[Unit]("Generate ddl diff")
     val ddlReport = taskKey[Unit]("Generate ddl report")
@@ -73,7 +75,7 @@ object DdlPlugin extends sbt.AutoPlugin {
     }
 
   def report(m2Root: String, xmlFile: File, target: File, log: util.Logger): Unit = {
-    val rs = Dependency.resolveJar(m2Root, "org.beangle.db:beangle-db-report_3:0.0.17")
+    val rs = Dependency.resolveJar(m2Root, s"org.beangle.db:beangle-db-report_3:$BeangleDbReportVersion")
     if (rs._1) {
       val reportDir = new File(target.getAbsolutePath + "/dbreport/")
       reportDir.mkdirs()
@@ -105,7 +107,7 @@ object DdlPlugin extends sbt.AutoPlugin {
       }
       val target = folder.getCanonicalPath + s"/${oldVersion}-${newVersion}.sql"
       val classpath = dependencies.map(_.data.getAbsolutePath).mkString(File.pathSeparator)
-      val pb = new ProcessBuilder("java", "-cp", classpath.toString, "org.beangle.data.jdbc.meta.Diff",
+      val pb = new ProcessBuilder("java", "-cp", classpath, "org.beangle.data.jdbc.meta.Diff",
         oldDbFile.getAbsolutePath, newDbFile.getAbsolutePath, target)
       log.debug(pb.command().toString)
       pb.inheritIO()

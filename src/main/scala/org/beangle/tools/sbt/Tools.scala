@@ -29,27 +29,26 @@ object Tools {
       if (supported) {
         val desktop = desktopClass.getMethod("getDesktop").invoke(null)
         desktopClass.getMethod("browse", classOf[URI]).invoke(desktop, uri)
-        return;
+        return
       }
     } catch {
       case _: Throwable =>
     }
     val osName = System.getProperty("os.name").toLowerCase
-    val rt = Runtime.getRuntime()
+    val rt = Runtime.getRuntime
     if (osName.contains("windows")) {
       rt.exec(Array("rundll32", "url.dll,FileProtocolHandler", url))
     } else if (osName.contains("mac") || osName.contains("darwin")) {
-      Runtime.getRuntime().exec(Array("open", url))
+      Runtime.getRuntime.exec(Array("open", url))
     } else {
-      val browsers = Array("xdg-open", "chromium", "google-chrome", "firefox", "konqueror",
-        "netscape", "opera", "midori")
+      val browsers = Array("xdg-open", "chromium", "google-chrome", "firefox", "konqueror", "netscape", "opera", "midori")
       var ok = false
       for (b <- browsers; if !ok) {
         try {
           rt.exec(Array(b, url))
           ok = true
         } catch {
-          case e: Throwable =>
+          case _: Throwable =>
         }
       }
       if (!ok) throw new Exception("Cannot open browser.")
