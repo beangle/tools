@@ -24,7 +24,7 @@ import java.io.File
 
 object DdlPlugin extends sbt.AutoPlugin {
 
-  var BeangleDbReportVersion="0.0.23"
+  var BeangleDbReportVersion="0.0.27"
 
   object autoImport {
     val ddlDiff = inputKey[Unit]("Generate ddl diff")
