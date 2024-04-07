@@ -21,6 +21,6 @@ import sbt.*
 
 object Sas {
   val Engine = "org.beangle.sas" % "beangle-sas-engine" % "0.12.3" % "test"
-  val Tomcat = "org.apache.tomcat.embed" % "tomcat-embed-core" % "10.1.13" % "test" exclude("org.apache.tomcat", "tomcat-annotations-api")
+  val Tomcat = "org.apache.tomcat.embed" % "tomcat-embed-core" % "10.1.18" % "test" exclude("org.apache.tomcat", "tomcat-annotations-api")
   val Undertow = "io.undertow" % "undertow-servlet" % "2.3.8.Final" % "test"
 }
