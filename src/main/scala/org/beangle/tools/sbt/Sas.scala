@@ -20,7 +20,7 @@ package org.beangle.tools.sbt
 import sbt.*
 
 object Sas {
-  val Engine = "org.beangle.sas" % "beangle-sas-engine" % "0.12.8" % "test"
+  val Engine = "org.beangle.sas" % "beangle-sas-engine" % "0.12.9" % "test"
   val Tomcat = "org.apache.tomcat.embed" % "tomcat-embed-core" % "11.0.1" % "test" exclude("org.apache.tomcat", "tomcat-annotations-api")
   val Undertow = "io.undertow" % "undertow-servlet" % "2.3.18.Final" % "test"
 }
