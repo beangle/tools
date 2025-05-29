@@ -67,7 +67,7 @@ object TomcatPlugin extends sbt.AutoPlugin {
       cmds ++= args
       import scala.jdk.javaapi.CollectionConverters.asJava
       val pb = new ProcessBuilder(asJava(cmds))
-      pb.inheritIO()0
+      pb.inheritIO()
       val pro = pb.start()
       pro.waitFor()
     } catch {
