@@ -54,7 +54,7 @@ object Https {
       case HTTP_OK => conn
       case HTTP_MOVED_TEMP | HTTP_MOVED_PERM =>
         val newLoc = conn.getHeaderField("location")
-        followRedirect(new URL(newLoc).openConnection, method)
+        followRedirect(Networks.url(newLoc).openConnection, method)
       case _ => conn
     }
   }

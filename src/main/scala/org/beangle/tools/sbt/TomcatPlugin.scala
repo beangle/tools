@@ -20,16 +20,58 @@ package org.beangle.tools.sbt
 import sbt.*
 import sbt.Keys.*
 
+import java.io.File
+import scala.collection.mutable
+
 object TomcatPlugin extends sbt.AutoPlugin {
 
   object autoImport {
+    val tomcatStart = inputKey[Unit]("start tomcat server")
+
     lazy val baseSettings: Seq[Setting[_]] = Seq(
-      libraryDependencies ++= Seq(Sas.Engine, Sas.TomcatCore, Sas.TomcatWebSocket, Sas.TomcatJasper)
+      libraryDependencies ++= Seq(Sas.Engine, Sas.TomcatCore, Sas.TomcatWebSocket, Sas.TomcatJasper),
+      tomcatStart := {
+        import complete.DefaultParsers.*
+        val args = spaceDelimited("<arg>").parsed
+        launchTomcat(crossTarget.value.getAbsolutePath, bootClasspathsTask.value, args, streams.value.log)
+      }
     )
+  }
+
+  lazy val bootClasspathsTask = {
+    Def.task {
+      val classpaths = new collection.mutable.ArrayBuffer[Attributed[File]]
+      classpaths ++= (Test / fullClasspath).value
+      val testClasses = classpaths.find(x => x.data.isDirectory && x.data.getName == "test-classes")
+      classpaths --= testClasses
+      classpaths
+    }
   }
 
   import autoImport.*
 
   override lazy val projectSettings: Seq[Setting[_]] = baseSettings
 
+  private def launchTomcat(target: String, dependencies: collection.Seq[Attributed[File]], args: Seq[String], log: util.Logger): Unit = {
+    val folder = new File(target + "/tomcat/")
+    folder.mkdirs()
+    val classpath = dependencies.map(_.data.getAbsolutePath).mkString(File.pathSeparator)
+    try {
+      val cmds = new mutable.ArrayBuffer[String]
+      cmds += ("java")
+      cmds += ("-cp")
+      cmds += (classpath)
+      //cmds += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5555"
+      cmds += ("org.beangle.sas.engine.tomcat.Bootstrap")
+      cmds += "--dev=true"
+      cmds ++= args
+      import scala.jdk.javaapi.CollectionConverters.asJava
+      val pb = new ProcessBuilder(asJava(cmds))
+      pb.inheritIO()0
+      val pro = pb.start()
+      pro.waitFor()
+    } catch {
+      case e: Exception => e.printStackTrace()
+    }
+  }
 }

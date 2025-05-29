@@ -17,7 +17,7 @@
 
 package org.beangle.tools.sbt
 
-import org.beangle.tools.downloader.DefaultDownloader
+import org.beangle.tools.downloader.{DefaultDownloader, Networks}
 
 import java.io.{File, InputStreamReader, LineNumberReader}
 import java.net.URL
@@ -40,7 +40,7 @@ object Dependency {
     val gavs = Seq(gav)
     val rs = Dependency.download(target, gavs)
     if (rs._2.isEmpty) {
-      val nestedUrl = new URL("jar:file:" + rs._1.head + "!/META-INF/beangle/dependencies")
+      val nestedUrl = Networks.url("jar:file:" + rs._1.head + "!/META-INF/beangle/dependencies")
       val jars = download(target, resolve(nestedUrl))
       if (jars._2.isEmpty) {
         (true, (rs._1.head :: jars._1.toList).mkString(File.pathSeparator))
@@ -63,7 +63,7 @@ object Dependency {
       val version = infos(2)
       val file = new File(m2Path(target, group, artifact, version))
       if (!file.exists()) {
-        new DefaultDownloader(new URL(m2Path(repoBase, group, artifact, version)), file).start();
+        new DefaultDownloader(Networks.url(m2Path(repoBase, group, artifact, version)), file).start();
       }
       if (file.exists()) {
         success += file.getAbsolutePath
