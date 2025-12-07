@@ -20,11 +20,12 @@ package org.beangle.tools.sbt
 import sbt.*
 
 object Sas {
-  val Engine = "org.beangle.sas" % "beangle-sas-engine" % "0.13.5"
-  val JulToSlf4j = "org.slf4j" % "jul-to-slf4j" % "2.0.17"
+  val JulToSlf4j = "org.slf4j" % "jul-to-slf4j" % "2.0.17" % "test"
 
-  val TomcatCore = "org.apache.tomcat.embed" % "tomcat-embed-core" % "11.0.14" exclude("org.apache.tomcat", "tomcat-annotations-api")
-  val TomcatWebSocket = "org.apache.tomcat.embed" % "tomcat-embed-websocket" % "11.0.14" exclude("org.apache.tomcat", "tomcat-annotations-api")
+  val Engine = "org.beangle.sas" % "beangle-sas-engine" % "0.13.7" % "test"
+
+  val TomcatCore = "org.apache.tomcat.embed" % "tomcat-embed-core" % "11.0.14" % "test" exclude("org.apache.tomcat", "tomcat-annotations-api")
+  val TomcatWebSocket = "org.apache.tomcat.embed" % "tomcat-embed-websocket" % "11.0.14" % "test" exclude("org.apache.tomcat", "tomcat-annotations-api")
 
   val Undertow = "io.undertow" % "undertow-servlet" % "2.3.20.Final" % "test"
 }

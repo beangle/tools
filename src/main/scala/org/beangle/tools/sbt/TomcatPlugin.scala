@@ -30,7 +30,6 @@ object TomcatPlugin extends sbt.AutoPlugin {
 
     lazy val baseSettings: Seq[Setting[_]] = Seq(
       libraryDependencies ++= Seq(Sas.Engine, Sas.TomcatCore, Sas.TomcatWebSocket, Sas.JulToSlf4j),
-      Compile / mainClass := Some("org.beangle.sas.engine.tomcat.Bootstrap"),
       tomcatStart := {
         import complete.DefaultParsers.*
         val args = spaceDelimited("<arg>").parsed
