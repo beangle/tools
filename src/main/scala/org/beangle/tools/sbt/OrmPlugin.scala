@@ -55,7 +55,7 @@ object OrmPlugin extends sbt.AutoPlugin {
     folder.mkdirs()
     val classpath = dependencies.map(_.data.getAbsolutePath).mkString(File.pathSeparator)
     try {
-      val pb = new ProcessBuilder("java", "-cp", classpath, "org.beangle.data.orm.tool.DdlGenerator",
+      val pb = new ProcessBuilder("java", "-cp", classpath, "org.beangle.data.orm.DdlGenerator",
         "PostgreSQL,Mysql,H2,Oracle,Db2,Sqlserver", folder.getCanonicalPath, "zh_CN")
       log.debug(pb.command().toString)
       pb.inheritIO()
