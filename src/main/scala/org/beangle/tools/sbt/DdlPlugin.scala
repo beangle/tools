@@ -17,55 +17,52 @@
 
 package org.beangle.tools.sbt
 
-import sbt.Keys._
-import sbt._
+import sbt.Keys.*
+import sbt.*
+import xsbti.FileConverter
 
 import java.io.File
 
 object DdlPlugin extends sbt.AutoPlugin {
 
-  var BeangleSqlplusVersion="0.0.41"
+  var BeangleSqlplusVersion = "0.2.4"
 
   object autoImport {
     val ddlDiff = inputKey[Unit]("Generate ddl diff")
     val ddlReport = taskKey[Unit]("Generate ddl report")
 
-    lazy val baseOrmSettings: Seq[Def.Setting[_]] = Seq(
-      ddlReport := ddlReportTask.value,
-      ddlDiff := {
-        import complete.DefaultParsers._
+    lazy val baseOrmSettings: Seq[Def.Setting[?]] = Seq(
+      ddlReport := Def.uncached(ddlReportTask.value),
+      ddlDiff := Def.inputTaskDyn {
+        import complete.DefaultParsers.*
         val args = spaceDelimited("<arg>").parsed
-        val log = streams.value.log
-        if (args.size < 2) {
-          log.error("usage:ormDdlDiff oldVersion newVersion")
-        } else {
-          diff(baseDirectory.value, crossTarget.value, bootClasspathsTask.value,
-            "PostgreSQL".toLowerCase(), args(0), args(1), log)
+        Def.task {
+          given FileConverter = fileConverter.value
+          val log = streams.value.log
+          if (args.size < 2) {
+            log.error("usage:ormDdlDiff oldVersion newVersion")
+          } else {
+            val jars = CpFiles.files((Runtime / fullClasspath).value)
+            diff(baseDirectory.value, crossTarget.value, jars,
+              "PostgreSQL".toLowerCase(), args(0), args(1), log)
+          }
         }
-      }
+      }.evaluated
     )
   }
 
-  import autoImport._
+  import autoImport.*
 
   override def trigger = allRequirements
 
   override lazy val projectSettings = inConfig(Compile)(baseOrmSettings)
 
-  lazy val bootClasspathsTask = {
-    Def.task {
-      val classpaths = new collection.mutable.ArrayBuffer[Attributed[File]]
-      classpaths ++= (Runtime / fullClasspath).value
-      classpaths
-    }
-  }
   lazy val ddlReportTask =
     Def.task {
       val reportPath = "/src/main/resources/db/postgresql/report.xml"
-      val reportXML = new File(baseDirectory.value + reportPath)
+      val reportXML = new File(baseDirectory.value, reportPath.stripPrefix("/"))
       val log = streams.value.log
-      resolvers.value.find(_.isInstanceOf[MavenRepository]) foreach { mc =>
-        val m2Root = mc.asInstanceOf[MavenRepository].root
+      resolvers.value.collectFirst { case mc: MavenRepository => mc.root }.foreach { m2Root =>
         if (reportXML.exists()) {
           report(m2Root, reportXML, crossTarget.value, log)
         } else {
@@ -86,11 +83,11 @@ object DdlPlugin extends sbt.AutoPlugin {
       val pro = pb.start()
       pro.waitFor()
       log.info(s"DDL report was generated in ${targetDir}")
-      Tools.openBrowser(targetDir+"/index.html")
+      Tools.openBrowser(targetDir + "/index.html")
     }
   }
 
-  def diff(base: File, targetBase: File, dependencies: collection.Seq[Attributed[File]], dialect: String,
+  def diff(base: File, targetBase: File, dependencies: Seq[File], dialect: String,
            oldVersion: String, newVersion: String, log: util.Logger): Unit = {
     val folder = new File(targetBase.getAbsolutePath + "/db/" + dialect + "/migrate")
     folder.mkdirs()
@@ -106,7 +103,7 @@ object DdlPlugin extends sbt.AutoPlugin {
         return
       }
       val target = folder.getCanonicalPath + s"/${oldVersion}-${newVersion}.sql"
-      val classpath = dependencies.map(_.data.getAbsolutePath).mkString(File.pathSeparator)
+      val classpath = dependencies.map(_.getAbsolutePath).mkString(File.pathSeparator)
       val pb = new ProcessBuilder("java", "-cp", classpath, "org.beangle.jdbc.meta.Diff",
         oldDbFile.getAbsolutePath, newDbFile.getAbsolutePath, target)
       log.debug(pb.command().toString)
@@ -118,5 +115,4 @@ object DdlPlugin extends sbt.AutoPlugin {
       case e: Exception => e.printStackTrace()
     }
   }
-
 }

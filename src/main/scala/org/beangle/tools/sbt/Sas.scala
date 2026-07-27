@@ -24,8 +24,8 @@ object Sas {
 
   val Engine = "org.beangle.sas" % "beangle-sas-engine" % "0.13.10" % "test"
 
-  val TomcatCore = "org.apache.tomcat.embed" % "tomcat-embed-core" % "11.0.21" % "test" exclude("org.apache.tomcat", "tomcat-annotations-api")
-  val TomcatWebSocket = "org.apache.tomcat.embed" % "tomcat-embed-websocket" % "11.0.21" % "test" exclude("org.apache.tomcat", "tomcat-annotations-api")
+  val TomcatCore = ("org.apache.tomcat.embed" % "tomcat-embed-core" % "11.0.21" % "test").exclude("org.apache.tomcat", "tomcat-annotations-api")
+  val TomcatWebSocket = ("org.apache.tomcat.embed" % "tomcat-embed-websocket" % "11.0.21" % "test").exclude("org.apache.tomcat", "tomcat-annotations-api")
 
   val Undertow = "io.undertow" % "undertow-servlet" % "2.3.24.Final" % "test"
 }

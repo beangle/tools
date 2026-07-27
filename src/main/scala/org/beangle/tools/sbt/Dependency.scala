@@ -71,7 +71,7 @@ object Dependency {
         failed += gav
       }
     }
-    (success, failed)
+    (success.toSeq, failed.toSeq)
   }
 
   def resolve(resource: URL): Seq[String] = {
@@ -80,17 +80,15 @@ object Dependency {
     try {
       val reader = new InputStreamReader(resource.openStream())
       val lr = new LineNumberReader(reader)
-      var line: String = null
-      do {
+      var line = lr.readLine()
+      while (line != null) {
+        if (line.nonEmpty) archives += line
         line = lr.readLine()
-        if (line != null && line.nonEmpty) {
-          archives += line
-        }
-      } while (line != null)
+      }
       lr.close()
     } catch {
       case e: Exception => e.printStackTrace()
     }
-    archives
+    archives.toSeq
   }
 }

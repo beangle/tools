@@ -19,17 +19,15 @@ package org.beangle.tools.sbt
 
 import sbt.*
 import sbt.Keys.*
+import xsbti.{FileConverter, HashedVirtualFileRef}
 
-object UndertowPlugin extends sbt.AutoPlugin {
+import java.io.File as JFile
 
-  object autoImport {
-    lazy val baseSettings: Seq[Setting[?]] = Seq(
-      libraryDependencies ++= Seq(Sas.Engine, Sas.Undertow, Sas.JulToSlf4j)
-    )
-  }
+/** sbt 2 classpath helpers (`HashedVirtualFileRef` → `java.io.File`). */
+object CpFiles {
+  def file(entry: Attributed[HashedVirtualFileRef])(using conv: FileConverter): JFile =
+    conv.toPath(entry.data).toFile
 
-  import autoImport.*
-
-  override lazy val projectSettings: Seq[Setting[?]] = baseSettings
-
+  def files(cp: Seq[Attributed[HashedVirtualFileRef]])(using FileConverter): Seq[JFile] =
+    cp.map(file)
 }

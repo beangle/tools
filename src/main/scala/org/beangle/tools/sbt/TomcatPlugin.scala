@@ -19,53 +19,48 @@ package org.beangle.tools.sbt
 
 import sbt.*
 import sbt.Keys.*
+import xsbti.FileConverter
 
 import java.io.File
 import scala.collection.mutable
+import scala.jdk.javaapi.CollectionConverters.asJava
 
 object TomcatPlugin extends sbt.AutoPlugin {
 
   object autoImport {
     val tomcatStart = inputKey[Unit]("start tomcat server")
 
-    lazy val baseSettings: Seq[Setting[_]] = Seq(
+    lazy val baseSettings: Seq[Setting[?]] = Seq(
       libraryDependencies ++= Seq(Sas.Engine, Sas.TomcatCore, Sas.TomcatWebSocket, Sas.JulToSlf4j),
-      tomcatStart := {
+      tomcatStart := Def.inputTaskDyn {
         import complete.DefaultParsers.*
         val args = spaceDelimited("<arg>").parsed
-        launchTomcat(crossTarget.value.getAbsolutePath, bootClasspathsTask.value, args, streams.value.log)
-      }
+        Def.task {
+          given FileConverter = fileConverter.value
+          val jars = CpFiles.files((Test / fullClasspath).value)
+            .filterNot(f => f.isDirectory && f.getName == "test-classes")
+          launchTomcat(crossTarget.value.getAbsolutePath, jars, args, streams.value.log)
+        }
+      }.evaluated
     )
-  }
-
-  lazy val bootClasspathsTask = {
-    Def.task {
-      val classpaths = new collection.mutable.ArrayBuffer[Attributed[File]]
-      classpaths ++= (Test / fullClasspath).value
-      val testClasses = classpaths.find(x => x.data.isDirectory && x.data.getName == "test-classes")
-      classpaths --= testClasses
-      classpaths
-    }
   }
 
   import autoImport.*
 
-  override lazy val projectSettings: Seq[Setting[_]] = baseSettings
+  override lazy val projectSettings: Seq[Setting[?]] = baseSettings
 
-  private def launchTomcat(target: String, dependencies: collection.Seq[Attributed[File]], args: Seq[String], log: util.Logger): Unit = {
+  private def launchTomcat(target: String, dependencies: Seq[File], args: Seq[String], log: util.Logger): Unit = {
     val folder = new File(target + "/tomcat/")
     folder.mkdirs()
-    val classpath = dependencies.map(_.data.getAbsolutePath).mkString(File.pathSeparator)
+    val classpath = dependencies.map(_.getAbsolutePath).mkString(File.pathSeparator)
     try {
       val cmds = new mutable.ArrayBuffer[String]
-      cmds += ("java")
-      cmds += ("-cp")
-      cmds += (classpath)
-      //cmds += "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5555"
-      cmds += ("org.beangle.sas.engine.tomcat.Bootstrap")
+      cmds += "java"
+      cmds += "-cp"
+      cmds += classpath
+      cmds += "org.beangle.sas.engine.tomcat.Bootstrap"
       cmds += "--dev=true"
       cmds ++= args
-      import scala.jdk.javaapi.CollectionConverters.asJava
       val pb = new ProcessBuilder(asJava(cmds))
       pb.inheritIO()
       val pro = pb.start()

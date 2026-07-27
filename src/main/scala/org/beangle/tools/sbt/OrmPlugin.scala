@@ -17,43 +17,39 @@
 
 package org.beangle.tools.sbt
 
+import sbt.Keys.*
+import sbt.*
+import xsbti.FileConverter
+
 import java.io.File
-import sbt.Keys._
-import sbt._
 
 object OrmPlugin extends sbt.AutoPlugin {
 
   object autoImport {
     val ormDdl = taskKey[Unit]("Generate orm ddl files")
 
-    lazy val baseOrmSettings: Seq[Def.Setting[_]] = Seq(
-      ormDdl := ormDdlTask.value
+    lazy val baseOrmSettings: Seq[Def.Setting[?]] = Seq(
+      ormDdl := Def.uncached(ormDdlTask.value)
     )
   }
 
-  import autoImport._
+  import autoImport.*
 
   override def trigger = allRequirements
 
   override lazy val projectSettings = inConfig(Compile)(baseOrmSettings)
 
-  lazy val bootClasspathsTask = {
-    Def.task {
-      val classpaths = new collection.mutable.ArrayBuffer[Attributed[File]]
-      classpaths ++= (Runtime / fullClasspath).value
-      classpaths
-    }
-  }
-
   lazy val ormDdlTask =
     Def.task {
-      generate(crossTarget.value.getAbsolutePath, bootClasspathsTask.value, streams.value.log)
+      given FileConverter = fileConverter.value
+      val jars = CpFiles.files((Runtime / fullClasspath).value)
+      generate(crossTarget.value.getAbsolutePath, jars, streams.value.log)
     }
 
-  private def generate(target: String, dependencies: collection.Seq[Attributed[File]], log: util.Logger): Unit = {
+  private def generate(target: String, dependencies: Seq[File], log: util.Logger): Unit = {
     val folder = new File(target + "/db/")
     folder.mkdirs()
-    val classpath = dependencies.map(_.data.getAbsolutePath).mkString(File.pathSeparator)
+    val classpath = dependencies.map(_.getAbsolutePath).mkString(File.pathSeparator)
     try {
       val pb = new ProcessBuilder("java", "-cp", classpath, "org.beangle.data.orm.DdlGenerator",
         "PostgreSQL,Mysql,H2,Oracle,Db2,Sqlserver", folder.getCanonicalPath, "zh_CN")
@@ -71,5 +67,4 @@ object OrmPlugin extends sbt.AutoPlugin {
       case e: Exception => e.printStackTrace()
     }
   }
-
 }

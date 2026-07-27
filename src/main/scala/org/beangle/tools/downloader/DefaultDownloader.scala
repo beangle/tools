@@ -19,11 +19,12 @@ package org.beangle.tools.downloader
 
 import java.io.{File, FileOutputStream, InputStream, OutputStream}
 import java.net.{URL, URLConnection}
+import scala.compiletime.uninitialized
 
 class DefaultDownloader(val url: URL, protected val location: File) extends Downloader {
 
-  protected var status: Downloader.Status = _
-  protected var startAt: Long = _
+  protected var status: Downloader.Status = uninitialized
+  protected var startAt: Long = uninitialized
   var verbose: Boolean = true
 
   def contentLength: Long = {
