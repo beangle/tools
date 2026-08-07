@@ -6,7 +6,7 @@ object BuildSettings {
     organizationName := "The Beangle Software",
     startYear := Some(2005),
     licenses += sbt.librarymanagement.License("GPL-3.0", uri("http://www.gnu.org/licenses/gpl-3.0.txt")),
-    libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.2.19" % Test),
+    libraryDependencies ++= Seq("org.scalatest" %% "scalatest" % "3.2.20" % Test),
     crossPaths := true,
 
     publishMavenStyle := true,
